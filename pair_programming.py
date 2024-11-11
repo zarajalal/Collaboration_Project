@@ -13,6 +13,7 @@ def check_duplicate(lis:list):
                     dup[i] = -1
                     dup[j] = -1
     return dup
+
 # initialize variables
 three_dice = [0,0,0]
 
@@ -46,7 +47,6 @@ while not player1_score >= max_score or player2_score >= max_score:
         else:
             print("You have TUPLED OUT (rolling three of the same)\nYour scored 0 points this round")
             fin_roll = 'done'
-        # three_dice = [2,6,2]
 
         # reroll the dice that are not duplicate numbers by check_duplicate
         if check_duplicate(three_dice)[0] == 1:
