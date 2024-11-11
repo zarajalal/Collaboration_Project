@@ -5,7 +5,7 @@ def check_duplicate(lis:list):
     '''Method to check if there are any values in a list that are duplicates and returns a list where the duplicated values are -1 in that position
     Only can input a list of length 3
     '''
-    dup = [0,0,0]
+    dup = [1,1,1]
     for i in range(len(lis)):
         for j in range(len(lis)):
             if not i == j:
