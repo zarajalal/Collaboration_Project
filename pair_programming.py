@@ -24,7 +24,18 @@ player2_score = 0
 turn = 1
 
 # score to reach
-max_score = 100
+max_score = 50
+
+# printing some title text
+print(f"""
+This is a \"Tuple Out\" Dice Game!
+2 Players will take turns rolling 3 dice.
+If 2 dice land on the same number, they will not be rerollable,
+If 3 dice land on the same number, all the points for that round will be lost.
+The player that reaches {max_score} first wins!
+Good luck!
+""")
+
 
 while not player1_score >= max_score or player2_score >= max_score:
     # roll three random 6 sided dice
