@@ -1,0 +1,30 @@
+
+# README for dice_game_pairProgram.py
+
+This program is a 1 versus 1 game competing for the most points. Whoever makes their score counter past 100 points. 
+
+## This Program
+- Takes in user input to roll or reroll 3 dice
+- The sum of the 3 dice will be added to the corresponding player's score counter
+- Rolling three of a kind will 'tuple out' and cause that player to score no points that round
+
+## To Play
+- Player's alturnate between rolling 3 dice
+- If two dice roll the same number, those two cannot be rerolled
+- If three dice roll the same number, that player will not be able to score points for that round
+- When the player is happy with their rolls, they type done and the sum of the dice will be added to their score counter
+- Tiebreaker rules exist: If both players reach or get over 100 points, whoever has the greater score will be declared the winner.
+
+### Example Play
+1) Player 1 rolls [2, 4, 2]
+2) Dice number 1 and 3 will not be able to be rerolled
+3) Player 1 is happy with their rolls and will not reroll
+4) Player 1 scores 8 points that round
+5) Player 2 rolls [1, 3, 4]
+6) Player 2 rerolls the numbers
+7) Player 2 gets rolls [1, 5, 5]
+8) Player 2 cannot reroll dice number 2 and 3 because they are the same
+9) Player 2 rerolls again to get [5, 5 ,5]
+10) Player 2 will not score any points that round
+11) The score at the end of the round is 8 - 0 and Player 1 is winning.
+
