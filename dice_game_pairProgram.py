@@ -18,8 +18,26 @@ def BotRoll(three_dice, duplicate_dice):
             score += 1
 
     else:
-        rand_choice_list = three_dice[duplicate_dice.index(1)] * str(1) + (6 - three_dice[duplicate_dice.index(1)]) * str(0)
-        return "done" if random.choice(rand_choice_list) == "1" else ""
+        # there is a double
+        if sum_of_doubled >= 8:
+        # min is 1 max is 6, middle is 3 or 4
+        # higher than 6 means there is a good chance of a good roll
+            # higher chance to keep a higher roll
+            rand_choice_list = (2*three_dice[duplicate_dice.index(1)] - 2) * str(1) + (6 - three_dice[duplicate_dice.index(1)]) * str(0)
+            if int(random.choice(rand_choice_list)) == 0:
+                score -= 2
+            else:
+                score += 2
+        else:
+            rand_choice_list = (2*three_dice[duplicate_dice.index(1)]) * str(1) + (6 - three_dice[duplicate_dice.index(1)]) * str(0)
+            score += int(random.choice(rand_choice_list))
+        # [three_dice[duplicate_dice.index(1)]] * three_dice[duplicate_dice.index(1)] + [0] * (6 - three_dice[duplicate_dice.index(1)])
+    if score >= 0:
+        return "done"
+    else:
+        return ""
+    
+    # return "done" if random.choice(rand_choice_list) == 1 else ""
 
 # conditions that make a good roll
 # total is fairly high: 556, 456
