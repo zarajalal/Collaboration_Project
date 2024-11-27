@@ -1,31 +1,46 @@
 
 import random
 
-# def BotRoll(three_dice):
-#     '''
-#     Determines whether the bot will reroll the current dice or score the dice
-#     '''
-#     score = 0
-#     val_of_doubled = 0
-#     for index in check_duplicate(three_dice):
-#         if index == -1:
-#             val_of_doubled += three_dice[index]
-#     if val_of_doubled == 0:
-#         # no double
-#         if three_dice[0] + three_dice[1] + three_dice[2] ==  :
+def BotRoll(three_dice, duplicate_dice):
+    '''
+    Determines whether the bot will reroll the current dice or score the dice
+    '''
+    score = 0
+    sum_of_doubled = 0
+    
+    for index in duplicate_dice:
+        if index == -1:
+            sum_of_doubled += three_dice[index]
+    if sum_of_doubled == 0:
+        # no double
+        if three_dice[0] + three_dice[1] + three_dice[2] ==  :
+            # if the dice rolls without a duplicate number is a "good sum" then lean towards keeping the dice
+            score += 1
 
-#     elif val_of_doubled >  :
-#         score += 1
-#     else:
-#         # valofdoubled is less than value (low double)
-#         score -= 1
+    else:
+        if three_dice[duplicate_dice.index(1)] == 6:
+            # rolled a double and scored a 6
+            # there is no higher roll for that turn
+            return "done"
+        if sum_of_doubled >= 2* 3:
+            # pair of 3s, a fairly high double that likely won't be rerolled
+            score += 1
+            if sum_of_doubled == 12:
+                # pair of 6, of course keep
+                score += 5
+            
+        else:
+            # valofdoubled is a low double
+            score -= 1
+            if three_dice[duplicate_dice.index(1)] >= 3:
+                score += 2
 
     
 
-#     if score <= 0:
-#         return "done"
-#     else:
-#         return ""
+    if score <= 0:
+        return "done"
+    else:
+        return ""
 
 # conditions that make a good roll
 # total is fairly high: 556, 456
@@ -88,13 +103,13 @@ players = {
 turn = 1
 
 # score to reach
-max_score = 100
+score_to_win = 100
 
 # determines if the 2nd player is a computer
 if "Computer" in players:
-    play2Bot = False
-else:
     play2Bot = True
+else:
+    play2Bot = False
 
 
 
@@ -104,32 +119,28 @@ This is a \"Tuple Out\" Dice Game!
 2 Players will take turns rolling 3 dice.
 If 2 dice land on the same number, they will not be rerollable,
 If 3 dice land on the same number, all the points for that round will be lost.
-The player that reaches {max_score} first wins!
+The player that reaches {score_to_win} first wins!
 Good luck!
 """)
 
-
 while True:
-    if players[list(players.keys())[0]] >= max_score and turn == 1:
+    # Player wins if it is turn is player 1's and either player reaches over the score to win
+    if players[list(players.keys())[0]] >= score_to_win and turn == 1:
         break
-    elif players[list(players.keys())[1]] >= max_score and turn == 1:
-        break
-    print(players)
-    if input("" == "s"):
+    elif players[list(players.keys())[1]] >= score_to_win and turn == 1:
         break
 
     # roll three random 6 sided dice
     three_dice = random.choices(range(1,7), k = 3)
     # Check if there are any values in a list that are duplicates and returns a list where the duplicated values are -1 in that position
     # Only can input a list of length 3
-    duplicate_Dice = [1,1,1]
+    duplicate_dice = [1,1,1]
     for i in range(len(three_dice)):
         for j in range(len(three_dice)):
             if not i == j:
                 if three_dice[i] == three_dice[j]:
-                    duplicate_Dice[i] = -1
-                    duplicate_Dice[j] = -1
-
+                    duplicate_dice[i] = -1
+                    duplicate_dice[j] = -1
 
     # code for the player turn
     fin_roll = ""
@@ -143,9 +154,9 @@ while True:
             print("Player 2's turn")
 
         # check if the roll is tupled out (all three dice are the same number) or reroll dice
-        if not duplicate_Dice.count(-1) == 3:
-            if turn == -1 and play2Bot: 
-                # fin_roll = BotRoll(three_dice)
+        if not duplicate_dice.count(-1) == 3:
+            if turn == -1 and play2Bot:
+                fin_roll = BotRoll(three_dice, duplicate_dice)
                 None
             else:
                 fin_roll = input("Only type \"done\" if happy with rolls\n")
@@ -153,39 +164,39 @@ while True:
                 break
         else:
             if turn == 1:
-                print("You have TUPLED OUT (rolling three of the same)\nYour scored 0 points this round")
-            elif turn == -1 and play2Bot:
-                print("Player 2 have TUPLED OUT (rolling three of the same)\nYour scored 0 points this round")
+                print(f"{list(players.keys())[0]} has TUPLED OUT (rolling three of the same)\nYour scored 0 points this round")
+            elif turn == -1:
+                print(f"{"The Computer" if list(players.keys())[1] == "Computer" else list(players.keys())[1]} has TUPLED OUT (rolling three of the same)\nYour scored 0 points this round")
             break
 
         # reroll the dice that are not duplicate numbers by check_duplicate
-        if duplicate_Dice[0] == 1:
+        if duplicate_dice[0] == 1:
             three_dice[0] = random.choice(range(1,7))
-        if duplicate_Dice[1] == 1:
+        if duplicate_dice[1] == 1:
             three_dice[1] = random.choice(range(1,7))
-        if duplicate_Dice[2] == 1:
+        if duplicate_dice[2] == 1:
             three_dice[2] = random.choice(range(1,7))
         
     # add score, make sure tupled out does not get added score
-    if turn == 1 and not duplicate_Dice.count(-1) == 3:
-        player1_score += three_dice[0] + three_dice[1] + three_dice[2]
-    elif turn == -1 and not duplicate_Dice.count(-1) == 3:
-        player2_score += three_dice[0] + three_dice[1] + three_dice[2]
+    if turn == 1 and not duplicate_dice.count(-1) == 3:
+        players[list(players.keys())[0]] += three_dice[0] + three_dice[1] + three_dice[2]
+    elif turn == -1 and not duplicate_dice.count(-1) == 3:
+        players[list(players.keys())[1]] += three_dice[0] + three_dice[1] + three_dice[2]
     
     # change turn
     turn *= -1
 
-    print(f"\nCurrent Scores\nPlayer 1: {player1_score}\nPlayer 2: {player2_score}\n")
+    print(f"\nCurrent Scores\nPlayer 1: {players[list(players.keys())[0]]}\nPlayer 2: {players[list(players.keys())[1]]}\n")
 
 # print the winner
-if player1_score >= max_score and player2_score >= max_score:
-    if player1_score >= player2_score:
+if players[list(players.keys())[0]] >= score_to_win and players[list(players.keys())[1]] >= score_to_win:
+    if players[list(players.keys())[0]] >= players[list(players.keys())[1]]:
         print("PLAYER 1 WON")
-    if player2_score >= player1_score:
+    if players[list(players.keys())[1]] >= players[list(players.keys())[0]]:
         print("PLAYER 2 WON")
     else:
         print("Player's TIED")
-elif player1_score >= max_score:
+elif players[list(players.keys())[0]] >= score_to_win:
     print("PLAYER 1 WON")
 else:
     print("PLAYER 2 WON")
