@@ -18,29 +18,8 @@ def BotRoll(three_dice, duplicate_dice):
             score += 1
 
     else:
-        if three_dice[duplicate_dice.index(1)] == 6:
-            # rolled a double and scored a 6
-            # there is no higher roll for that turn
-            return "done"
-        if sum_of_doubled >= 2* 3:
-            # pair of 3s, a fairly high double that likely won't be rerolled
-            score += 1
-            if sum_of_doubled == 12:
-                # pair of 6, of course keep
-                score += 5
-            
-        else:
-            # valofdoubled is a low double
-            score -= 1
-            if three_dice[duplicate_dice.index(1)] >= 3:
-                score += 2
-
-    
-
-    if score <= 0:
-        return "done"
-    else:
-        return ""
+        rand_choice_list = three_dice[duplicate_dice.index(1)] * str(1) + (6 - three_dice[duplicate_dice.index(1)]) * str(0)
+        return "done" if random.choice(rand_choice_list) == "1" else ""
 
 # conditions that make a good roll
 # total is fairly high: 556, 456
