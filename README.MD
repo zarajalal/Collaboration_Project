@@ -1,12 +1,13 @@
 
 # README for dice_game_pairProgram.py
 
-This program is a 1 versus 1 game competing for the most points. Whoever makes their score counter past 100 points. 
+This program is a 1 versus 1 game or 1 versus computer competing for the most points. Whoever makes their score counter past 100 points wins
 
 ## This Program
 - Takes in user input to roll or reroll 3 dice
 - The sum of the 3 dice will be added to the corresponding player's score counter
 - Rolling three of a kind will 'tuple out' and cause that player to score no points that round
+- Hosts a AI that will play as player 2. Be careful, it is somewhat difficult to win against. Do not underestimate it for your own dignity.
 
 ## To Play
 - Player's alturnate between rolling 3 dice
@@ -14,6 +15,7 @@ This program is a 1 versus 1 game competing for the most points. Whoever makes t
 - If three dice roll the same number, that player will not be able to score points for that round
 - When the player is happy with their rolls, they type done and the sum of the dice will be added to their score counter
 - Tiebreaker rules exist: If both players reach or get over 100 points, whoever has the greater score will be declared the winner.
+- The AI will play by these rules as well
 
 ### Example Play
 1) Player 1 rolls [2, 4, 2]
