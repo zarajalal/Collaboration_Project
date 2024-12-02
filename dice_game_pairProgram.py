@@ -124,12 +124,18 @@ while True:
                 fin_roll = BotRoll(three_dice, duplicate_dice)
             else:
                 # player decides to reroll or not
-                fin_roll = input("Only type \"done\" if happy with rolls\n")
+                fin_roll = input("Only type \"done\" if happy with rolls\nType \"hist\" to print a graphical representation of history\n")
             # add checks if the player may have typed done wrong
             if fin_roll == "done" or fin_roll == "one" or fin_roll == "dne" or fin_roll == "don" or fin_roll == "doe" or fin_roll == "oen" or fin_roll == "odne":
-                    # * Does this count as avoiding an error based on user input (PATT 5.2)
-                    # * I'm avoiding possible spelling errors the user might make if they intend to complete their roll
+                # * Does this count as avoiding an error based on user input (PATT 5.2)
+                # * I'm avoiding possible spelling errors the user might make if they intend to complete their roll
                 break
+            elif fin_roll == 'hist':
+                # graph the point gain for both players over each turn
+                None
+
+
+                
         else:
             # print tupled out text
             if turn == 1:
