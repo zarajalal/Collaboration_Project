@@ -1,6 +1,8 @@
 
 import random
 import os
+import time
+
 
 def BotRoll(three_dice, duplicate_dice):
     '''
@@ -109,6 +111,16 @@ while True:
                         duplicate_dice[i] = -1
                         duplicate_dice[j] = -1
         
+        # add some pause between rolls
+        print("Rolling Dice",end='')
+        time.sleep(0.5)
+        print(".",end='')
+        time.sleep(0.5)
+        print(".",end='')
+        time.sleep(0.5)
+        print(".")
+        time.sleep(0.5)
+
         print("Current rolls: ", three_dice)
         print(f"It is currently",end=" ")
         # print who's turn it is
@@ -135,7 +147,7 @@ while True:
                 None
 
 
-                
+
         else:
             # print tupled out text
             if turn == 1:
@@ -172,6 +184,17 @@ while True:
         history.append("2")
     else:
         history.append("Tie")
+
+# add some time before printing the winner
+print("Calculating Winner",end='')
+time.sleep(1)
+print(".",end='')
+time.sleep(1)
+print(".",end='')
+time.sleep(1)
+print(".")
+time.sleep(1)
+
 # print the winner
 if players[list(players.keys())[0]] >= score_to_win and players[list(players.keys())[1]] >= score_to_win:
     if players[list(players.keys())[0]] >= players[list(players.keys())[1]]:
