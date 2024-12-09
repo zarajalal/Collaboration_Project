@@ -2,7 +2,10 @@
 import random
 import os
 import time
-
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 def BotRoll(three_dice, duplicate_dice):
     '''
@@ -58,14 +61,14 @@ name1 = input("Name of Player 1 or PRESS ENTER for default name\n")
 name2 = input("Name of Player 2 or PRESS ENTER for default name\nType BOT to play against Player 2 as Computer\n")
 players = {
     "Player 1" if name1 == "" else name1: 0,
-    "Computer" if name2 == "BOT" else ("Player 2" if name1 == "" else name1): 0,
+    "Computer" if name2 == "BOT" else ("Player 2" if name2 == "" else name2): 0,
 }
 
 # turn is set to player 1, -1 is player 2's turn
 turn = 1
 
 # score to surpass/reach to win
-score_to_win = 100
+score_to_win = 50
 
 # determines if the 2nd player is a computer
 if "Computer" in players:
@@ -74,7 +77,10 @@ else:
     play2Bot = False
 
 # keep track of who is in the lead
-history = []
+history = {"Players": [],
+           "Points": [],
+           "Rounds": []}
+turncounter=1
 
 # printing some title text
 print(f"""
@@ -112,14 +118,14 @@ while True:
                         duplicate_dice[j] = -1
         
         # add some pause between rolls
-        print("Rolling Dice",end='')
-        time.sleep(0.5)
-        print(".",end='')
-        time.sleep(0.5)
-        print(".",end='')
-        time.sleep(0.5)
+        print("Rolling Dice")
+        # time.sleep(0.5)
         print(".")
-        time.sleep(0.5)
+        # time.sleep(0.5)
+        print(".")
+        # time.sleep(0.5)
+        print(".")
+        # time.sleep(0.5)
 
         print("Current rolls: ", three_dice)
         print(f"It is currently",end=" ")
@@ -134,9 +140,14 @@ while True:
             if turn == -1 and play2Bot:
                 # have the bot decide whether to reroll or not
                 fin_roll = BotRoll(three_dice, duplicate_dice)
+                if not fin_roll == "done":
+                    print("Computer Rerolls...")
             else:
                 # player decides to reroll or not
-                fin_roll = input("Only type \"done\" if happy with rolls\nType \"hist\" to print a graphical representation of history\n")
+                # fin_roll = input("Only type \"done\" if happy with rolls\nType \"hist\" to print a graphical representation of history\n")
+
+                fin_roll = BotRoll(three_dice, duplicate_dice)
+
             # add checks if the player may have typed done wrong
             if fin_roll == "done" or fin_roll == "one" or fin_roll == "dne" or fin_roll == "don" or fin_roll == "doe" or fin_roll == "oen" or fin_roll == "odne":
                 # * Does this count as avoiding an error based on user input (PATT 5.2)
@@ -171,48 +182,59 @@ while True:
     elif turn == -1 and not duplicate_dice.count(-1) == 3:
         players[list(players.keys())[1]] += three_dice[0] + three_dice[1] + three_dice[2]
     
-    # change turn
-    turn *= -1
-
     # print the scores
     print(f"\nCurrent Scores\nPlayer 1: {players[list(players.keys())[0]]}\nPlayer 2: {players[list(players.keys())[1]]}",end="\n\n")
 
-    # add history to who is in the lead
-    if players[list(players.keys())[0]] > players[list(players.keys())[1]]:
-        history.append("1")
-    elif players[list(players.keys())[1]] > players[list(players.keys())[0]]:
-        history.append("2")
-    else:
-        history.append("Tie")
+    # add history to turns
+    history["Points"].append(three_dice[0] + three_dice[1] + three_dice[2])
+    history["Rounds"].append(turncounter)
 
+    if turn == 1:
+        # keep it in a list with the player name as well to differentiate the scores
+        history["Players"].append(list(players.keys())[0])
+    elif turn == -1:
+        history["Players"].append(list(players.keys())[1])
+        # count the turns
+        turncounter+=1
+    
+    
+
+    # change turn
+    turn *= -1
+    
 # add some time before printing the winner
 print("Calculating Winner",end='')
-time.sleep(1)
-print(".",end='')
-time.sleep(1)
-print(".",end='')
-time.sleep(1)
+# time.sleep(1)
 print(".")
-time.sleep(1)
+# time.sleep(1)
+print(".")
+# time.sleep(1)
+print(".")
+# time.sleep(2)
 
 # print the winner
 if players[list(players.keys())[0]] >= score_to_win and players[list(players.keys())[1]] >= score_to_win:
     if players[list(players.keys())[0]] >= players[list(players.keys())[1]]:
         print(f"{str(list(players.keys())[0]).upper()} WON")
-        history.append("Player 1 won")
-    if players[list(players.keys())[1]] >= players[list(players.keys())[0]]:
+    elif players[list(players.keys())[1]] >= players[list(players.keys())[0]]:
         print(f"{str(list(players.keys())[1]).upper()} WON")
-        history.append("Player 2 won")
     else:
         print("IT'S A TIED GAME")
-        history.append("Tied")
 elif players[list(players.keys())[0]] >= score_to_win:
     print(f"{str(list(players.keys())[0]).upper()} WON")
-    history.append("Player 1 won")
 else:
     print(f"{str(list(players.keys())[1]).upper()} WON")
-    history.append("Player 2 won")
 
 # save the history to a txt file for later use
 with open(f"{os.getcwd()}\\game_history.csv", "a") as savefile:
-    savefile.write(f"{history}",end="\n\n\n")
+    savefile.write(f"{history}\n\n")
+
+# print a graph of how close the game was
+
+
+history = {'Players': ['Player 1', 'Player 2', 'Player 1', 'Player 2', 'Player 1', 'Player 2', 'Player 1', 'Player 2', 'Player 1', 'Player 2'], 'Points': [10, 7, 8, 13, 16, 8, 8, 3, 8, 13], 'Rounds': [1, 1, 2, 2, 3, 3, 4, 4, 5, 5]}
+
+
+historyDF = pd.DataFrame.from_dict(history)
+g=sns.lineplot(data = historyDF, x="Rounds", y="Points", hue = "Players", palette = ["orange", "green"])
+plt.show()
