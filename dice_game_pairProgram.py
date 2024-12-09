@@ -233,8 +233,8 @@ with open(f"{os.getcwd()}\\game_history.csv", "a") as savefile:
 
 
 history = {'Players': ['Player 1', 'Player 2', 'Player 1', 'Player 2', 'Player 1', 'Player 2', 'Player 1', 'Player 2', 'Player 1', 'Player 2'], 'Points': [10, 7, 8, 13, 16, 8, 8, 3, 8, 13], 'Rounds': [1, 1, 2, 2, 3, 3, 4, 4, 5, 5]}
-
+history["Running Total"] = np.cumsum(history["Points"])
 
 historyDF = pd.DataFrame.from_dict(history)
-g=sns.lineplot(data = historyDF, x="Rounds", y="Points", hue = "Players", palette = ["orange", "green"])
+g=sns.lineplot(data = historyDF, x="Rounds", y="Running Total", hue = "Players", palette = ["orange", "green"])
 plt.show()
