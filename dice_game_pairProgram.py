@@ -47,9 +47,17 @@ def BotRoll(three_dice, duplicate_dice):
     if score >= 0:
         return "done"
     else:
-        return ""
+        return "pass"
     
-    
+def CumSumPoints(p1, p2):
+    cp1 = list(np.cumsum(p1))
+    cp2 = list(np.cumsum(p2))
+    full = []
+    for index in range(len(p1)):
+        full.append(cp1[index])
+        full.append(cp2[index])
+    return full
+
 # initialize variables
 three_dice = [0,0,0]
 
@@ -78,8 +86,11 @@ else:
 
 # keep track of who is in the lead
 history = {"Players": [],
-           "Points": [],
            "Rounds": []}
+# keep track of point counter for both players
+P1_Point = []
+P2_Point = []
+
 turncounter=1
 
 # printing some title text
@@ -91,6 +102,7 @@ If 3 dice land on the same number, all the points for that round will be lost.
 The player that reaches {score_to_win} first wins!
 Good luck!
 """)
+time.sleep(4)
 
 while True:
     # code for player's turn
@@ -102,6 +114,20 @@ while True:
 
     # roll three random 6 sided dice
     three_dice = random.choices(dice_face, k = 3)
+    # Ensure the players won't start off on a tuple out triple due to bad luck
+    while True:
+        # ensure the duplicated dice persist and mark them
+        duplicate_dice = [1,1,1]
+        for i in range(len(three_dice)):
+            for j in range(len(three_dice)):
+                if not i == j:
+                    if three_dice[i] == three_dice[j]:
+                        duplicate_dice[i] = -1
+                        duplicate_dice[j] = -1
+        if duplicate_dice == [-1,-1,-1]:
+            three_dice = random.choices(dice_face, k = 3)
+        else:
+            break
     # Check if there are any values in a list that are duplicates and returns a list where the duplicated values are -1 in that position
     # Only can input a list of length 3
     
@@ -117,48 +143,54 @@ while True:
                         duplicate_dice[i] = -1
                         duplicate_dice[j] = -1
         
-        # add some pause between rolls
-        print("Rolling Dice")
-        # time.sleep(0.5)
-        print(".")
-        # time.sleep(0.5)
-        print(".")
-        # time.sleep(0.5)
-        print(".")
-        # time.sleep(0.5)
-
-        print("Current rolls: ", three_dice)
-        print(f"It is currently",end=" ")
         # print who's turn it is
         if turn == 1:
-            print(f"{list(players.keys())[0]}'s turn")
+            print(f"\n{list(players.keys())[0]}'s turn")
         elif turn == -1:
-            print(f"{list(players.keys())[1]}'s turn")
+            print(f"\n{list(players.keys())[1]}'s turn")
 
-        # check if the roll is tupled out (all three dice are the same number) or reroll dice
+        # add some pause between rolls
+        print("Rolling Dice")
+        time.sleep(0.25)
+        print(".")
+        time.sleep(0.25)
+        print(".")
+        time.sleep(0.25)
+        print(".")
+        time.sleep(0.75)
+        print("Current rolls: ", three_dice)
+
         if not duplicate_dice.count(-1) == 3:
+        # check if the roll is tupled out (all three dice are the same number) or reroll dice
             if turn == -1 and play2Bot:
                 # have the bot decide whether to reroll or not
                 fin_roll = BotRoll(three_dice, duplicate_dice)
                 if not fin_roll == "done":
                     print("Computer Rerolls...")
             else:
-                # player decides to reroll or not
-                # fin_roll = input("Only type \"done\" if happy with rolls\nType \"hist\" to print a graphical representation of history\n")
+                while True:
+                    # player decides to reroll or not
+                    fin_roll = input("Only type \"done\" if happy with rolls\nType \"hist\" to print a graphical representation of history\n")
+                    
+                    if fin_roll == "auto":
+                    # because the bot is actually kinda good
+                        fin_roll = BotRoll(three_dice, duplicate_dice)
+                        print(fin_roll)
 
-                fin_roll = BotRoll(three_dice, duplicate_dice)
+                    if fin_roll == 'hist':
+                        # graph the point gain for both players over each turn
+                        history["Running Total"] = CumSumPoints(P1_Point,P2_Point)
+                        historyDF = pd.DataFrame.from_dict(history)
+                        g=sns.lineplot(data = historyDF, x="Rounds", y="Running Total", hue = "Players", palette = ["orange", "green"])
+                        plt.show()
+                    else:
+                        break
 
             # add checks if the player may have typed done wrong
             if fin_roll == "done" or fin_roll == "one" or fin_roll == "dne" or fin_roll == "don" or fin_roll == "doe" or fin_roll == "oen" or fin_roll == "odne":
                 # * Does this count as avoiding an error based on user input (PATT 5.2)
                 # * I'm avoiding possible spelling errors the user might make if they intend to complete their roll
                 break
-            elif fin_roll == 'hist':
-                # graph the point gain for both players over each turn
-                None
-
-
-
         else:
             # print tupled out text
             if turn == 1:
@@ -183,34 +215,47 @@ while True:
         players[list(players.keys())[1]] += three_dice[0] + three_dice[1] + three_dice[2]
     
     # print the scores
-    print(f"\nCurrent Scores\nPlayer 1: {players[list(players.keys())[0]]}\nPlayer 2: {players[list(players.keys())[1]]}",end="\n\n")
+    try:
+        # avoid printing score if it is near the end of the game
+        if  players[list(players.keys())[0]] >= score_to_win - int(score_to_win * 0.15) or  players[list(players.keys())[1]] >= score_to_win - int(score_to_win * 0.15):
+            # game is finished, prepare ending 'calculation'
+            if  players[list(players.keys())[0]] >= score_to_win or  players[list(players.keys())[1]] >= score_to_win:
+                print("")
+            else:
+                print("The score is neck and neck! Shoot for the finish!!",end="\n\n")
+        elif turn == -1:
+            print(f"\nCurrent Scores\n{list(players.keys())[0]}: {players[list(players.keys())[0]]}\n{list(players.keys())[1]}: {players[list(players.keys())[1]]}",end="\n\n")
+            time.sleep(1)
+    except IndexError:
+        # too early to begin counting
+        if turn == -1:
+            print(f"\nCurrent Scores\n{list(players.keys())[0]}: {players[list(players.keys())[0]]}\n{list(players.keys())[1]}: {players[list(players.keys())[1]]}",end="\n\n")
 
     # add history to turns
-    history["Points"].append(three_dice[0] + three_dice[1] + three_dice[2])
     history["Rounds"].append(turncounter)
 
     if turn == 1:
         # keep it in a list with the player name as well to differentiate the scores
         history["Players"].append(list(players.keys())[0])
+        P1_Point.append(three_dice[0] + three_dice[1] + three_dice[2])
     elif turn == -1:
         history["Players"].append(list(players.keys())[1])
+        P2_Point.append(three_dice[0] + three_dice[1] + three_dice[2])
         # count the turns
         turncounter+=1
     
-    
-
     # change turn
     turn *= -1
     
 # add some time before printing the winner
 print("Calculating Winner",end='')
-# time.sleep(1)
+time.sleep(1)
+print(".",end='')
+time.sleep(1)
+print(".",end='')
+time.sleep(1)
 print(".")
-# time.sleep(1)
-print(".")
-# time.sleep(1)
-print(".")
-# time.sleep(2)
+time.sleep(2)
 
 # print the winner
 if players[list(players.keys())[0]] >= score_to_win and players[list(players.keys())[1]] >= score_to_win:
@@ -225,16 +270,13 @@ elif players[list(players.keys())[0]] >= score_to_win:
 else:
     print(f"{str(list(players.keys())[1]).upper()} WON")
 
+history["Running Total"] = CumSumPoints(P1_Point,P2_Point)
 # save the history to a txt file for later use
 with open(f"{os.getcwd()}\\game_history.csv", "a") as savefile:
-    savefile.write(f"{history}\n\n")
+    savefile.write(f"{history}\n")
+    savefile.write(f"{P1_Point}\n{P2_Point}\n\n")
 
 # print a graph of how close the game was
-
-
-history = {'Players': ['Player 1', 'Player 2', 'Player 1', 'Player 2', 'Player 1', 'Player 2', 'Player 1', 'Player 2', 'Player 1', 'Player 2'], 'Points': [10, 7, 8, 13, 16, 8, 8, 3, 8, 13], 'Rounds': [1, 1, 2, 2, 3, 3, 4, 4, 5, 5]}
-history["Running Total"] = np.cumsum(history["Points"])
-
 historyDF = pd.DataFrame.from_dict(history)
 g=sns.lineplot(data = historyDF, x="Rounds", y="Running Total", hue = "Players", palette = ["orange", "green"])
 plt.show()
